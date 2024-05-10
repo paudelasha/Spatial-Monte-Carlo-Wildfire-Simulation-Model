@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-Created on Sun Oct  3 12:04:24 2021
-
-@author: dell
+This is a code to move polygon randomly to new place for Monte Carlo Simulation
 """
 import pandas as pd
 import numpy as np
@@ -59,6 +56,7 @@ def randominsideAOI (X_min, X_max, Y_min, Y_max, polygon):
         
 def randomnumber(): #this function randomly pick up # of fire events
     eventnumber = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 18]
+    # this is probability values came from ???
     probability = [0.138888889, 0.055555556, 0.194444444, 0.166666667, 
                    0.055555556, 0.083333333, 0.083333333, 0.083333333, 
                    0.027777778, 0.027777778, 0.027777778, 0.027777778, 0.027777778]
@@ -66,9 +64,10 @@ def randomnumber(): #this function randomly pick up # of fire events
     return firenumber[0]
 
         
-#set-up AOI
-aoidf = pd.read_csv(r"C:\Users\paude\Documents\0_simulation\simulation\AOI_point.txt") #<----- change path
-#define AOI polygon
+#set-up aera of interest (AOI)
+aoidf = pd.read_csv(r"C:\...\AOI_point.txt") #<----- A file giving the AOI polygon
+
+#define AOI polygon, the coordinate system is ??? 
 X_min = 532378.004700
 X_max = 780094.157044
 Y_min = 4246419.794000
@@ -76,20 +75,22 @@ Y_max = 4654286.669000
 aoiarr = aoidf[['POINT_X', 'POINT_Y']].to_numpy()
 polygon = Polygon(aoiarr)
 
-#set_up SA polygon
-SAdf = pd.read_csv(r"C:\Users\paude\Documents\0_simulation\simulation\SA_point.txt") #<----- change path
+#set_up study area (SA) polygon. The study area is inside the AOI
+SAdf = pd.read_csv(r"C:\...\SA_point.txt") #<----- A file giving the SA polygon
 SAarr = SAdf[['POINT_X', 'POINT_Y']].to_numpy()
 SApolygon = Polygon(SAarr)
 
 #loading list of event
-listdf = pd.read_csv(r"C:\Users\paude\Documents\0_simulation\simulation\list_events_after2000.txt") #<----- change path
+listdf = pd.read_csv(r"C:\...\list_events_after2000.txt") #<----- This is a file giving all the event information
 eventlist = listdf['fire1984_6'].tolist()
 
-for simulation in range (86, 88): #here you define the simulation number start / end 
+# ------------------ START SIMULATION HERE -----------------------
+
+for simulation in range (1, 100): #here you define the simulation number start / end 
     start_time = time.time()
-    print (" #########   start simulation# ", simulation +1)
+    print (" #########   start simulation# ", simulation +1) 
     
-    for year in range (100): #here you define how many years for 1 simulation
+    for year in range (100): #here you define how many years for 1 simulation, 100 time is apply here
         
         num_fire = randomnumber() #random select from previous # of events
         
@@ -99,7 +100,7 @@ for simulation in range (86, 88): #here you define the simulation number start /
             print (selectevent)
         
             #set up environment for random move
-            folderpath = r"C:\Users\paude\Documents\0_simulation\simulation\event_txt_file" #<----- change path
+            folderpath = r"C:\...\event_txt_file" #<----- Set a path for file saving
             directory = os.fsencode(folderpath)
             
             #move events
@@ -109,9 +110,10 @@ for simulation in range (86, 88): #here you define the simulation number start /
                 for file in os.listdir(directory): #compile event dataframe
                     filename = os.fsdecode(file)
                     
-                    if filename[11:11+len(event)] == event: #double check this! might have same name!!
+                    if filename[11:11+len(event)] == event: #double check this! might have same name because of the fire event names!!
                         print (filename)
-             
+                        
+                        # This is extract step to deal with complicated polygons.
                         if filename.endswith("no_hole.txt"):
                             noholedf = pd.read_csv(folderpath+"\\"+ filename, delim_whitespace=True)
                             noholedf['type'] = 'no_hole'
@@ -160,14 +162,16 @@ for simulation in range (86, 88): #here you define the simulation number start /
                 finalcombine.sort_values(by=['UID'], inplace=True)
                 final2 = finalcombine.drop_duplicates(subset=['UID'])
     
-                final2.to_csv(r"C:\Users\paude\Documents\0_simulation\simulation\all_event" + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- change path
+                final2.to_csv(r"C:\..." + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving the path to save file
                 
                 checkarray = moveddf[['new_x', 'new_y']].to_numpy()
+
+                # This step filter polygons to maker sure it is inside the SA
                 for x, y in checkarray:
                     checkpoint = Point (x, y)
                     if insideAOI(checkpoint, SApolygon) is True:
                         print ("!!! moved event inside SA, export to a txt file !!!")
-                        final2.to_csv(r"C:\Users\paude\Documents\0_simulation\simulation\SA_event" + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- change path
+                        final2.to_csv(r"C:\..." + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving the path to save file
                         break
                     else:
                         continue
