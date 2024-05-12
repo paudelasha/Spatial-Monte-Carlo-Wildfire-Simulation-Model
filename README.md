@@ -20,7 +20,6 @@ Repeated for 100 years, and 100 simulations.
 #### Step 3: Simulation Clipped to Sample Area
 
 
-
                 
     
            
