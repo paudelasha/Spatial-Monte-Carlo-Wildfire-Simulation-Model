@@ -23,3 +23,4 @@ Repeated for 100 years, and 100 simulations.
                 
     
            
+![Picture1](https://github.com/paudelasha/Spatial-Monte-Carlo-Wildfire-Simulation-Model/assets/113131787/03d98290-6e38-46a1-9777-f9018b5b399c)
