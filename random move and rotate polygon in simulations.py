@@ -51,7 +51,7 @@ def randominsideAOI (X_min, X_max, Y_min, Y_max, polygon):
             continue
         
 def randomnumber():
-    # This is the setting for Scenerio 1
+    # This is the setting for one of the Scenerio
     # A function randomly pick up number of fire events
     eventnumber = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 18]
     probability = [0.138888889, 0.055555556, 0.194444444, 0.166666667, 
@@ -77,7 +77,7 @@ SAarr = SAdf[['POINT_X', 'POINT_Y']].to_numpy()
 SApolygon = Polygon(SAarr)
 
 # Loading the information of fire event
-listdf = pd.read_csv(r"C:\...\list_events_after2000.txt") #<----- A file giving all the event information
+listdf = pd.read_csv(r"C:\...\list_events.txt") #<----- A file giving all the event information
 eventlist = listdf['fire1984_6'].tolist()
 
 # ------------------ START SIMULATION HERE -----------------------
@@ -157,7 +157,7 @@ for simulation in range (0, 99): # Here to define the simulation number start / 
                 finalcombine.sort_values(by=['UID'], inplace=True)
                 final2 = finalcombine.drop_duplicates(subset=['UID'])
     
-                final2.to_csv(r"C:\..." + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving a path to save file
+                final2.to_csv(r"C:\...\AOItextfile" + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving a path to save file
                 
                 checkarray = moveddf[['new_x', 'new_y']].to_numpy()
 
@@ -166,7 +166,7 @@ for simulation in range (0, 99): # Here to define the simulation number start / 
                     checkpoint = Point (x, y)
                     if insideAOI(checkpoint, SApolygon) is True:
                         print ("!!! Moved event inside SA, export to a txt file !!!")
-                        final2.to_csv(r"C:\..." + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving the path to save file
+                        final2.to_csv(r"C:\...\SAtextfile" + "\\" + event + "_s" + str(simulation + 1) + "_y" + str(year + 1) + ".txt") #<----- Here ginving the path to save file
                         break
                     else:
                         continue
